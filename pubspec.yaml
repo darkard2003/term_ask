@@ -1,7 +1,7 @@
 name: term_ask
-description: A sample command-line application.
+description: A simple gemini client for the terminal
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/darkard2003/term_ask.git
 
 environment:
   sdk: ^3.6.0
