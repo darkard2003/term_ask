@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:console_markdown/console_markdown.dart';
 import 'package:dotenv/dotenv.dart';
-import 'package:term_ask/gemini_service.dart';
+import 'package:term_ask/term_ask.dart';
 
 void main(List<String> args) async {
   var env = DotEnv(includePlatformEnvironment: true, quiet: true)..load();
@@ -13,7 +13,7 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  var model = GeminiService(apiKey);
+  var model = TermAsk(apiKey);
 
   if (args.isEmpty) {
     while (true) {

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
 
-class GeminiService {
+class TermAsk {
   final String _apiKey;
   late GenerativeModel _model;
 
@@ -17,7 +17,7 @@ class GeminiService {
     "User: Can you help me with"
   ];
 
-  GeminiService(this._apiKey) {
+  TermAsk(this._apiKey) {
     _model = GenerativeModel(
       model: 'gemini-2.0-flash',
       apiKey: _apiKey,
