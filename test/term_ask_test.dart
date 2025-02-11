@@ -1,0 +1,8 @@
+import 'package:term_ask/term_ask.dart';
+import 'package:test/test.dart';
+
+void main() {
+  test('calculate', () {
+    expect(calculate(), 42);
+  });
+}
