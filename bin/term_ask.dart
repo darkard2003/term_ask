@@ -5,9 +5,6 @@ import 'package:dotenv/dotenv.dart';
 import 'package:term_ask/term_ask.dart';
 
 void main(List<String> args) async {
-  print('Hello from term_ask!');
-  print('Arguments received: $args');
-
   var env = DotEnv(includePlatformEnvironment: true, quiet: true)..load();
   var apiKey = env['GEMINI_API_KEY'];
 

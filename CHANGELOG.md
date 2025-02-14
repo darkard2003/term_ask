@@ -1,3 +1,7 @@
+## 1.0.2
+
+- Fixed api key bug
+
 ## 1.0.1
 
 - Alpha release
