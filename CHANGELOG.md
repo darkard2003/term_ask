@@ -1,4 +1,4 @@
-## 1.0.1-a1
+## 1.0.1
 
 - Alpha release
 - Basic Gemini integration

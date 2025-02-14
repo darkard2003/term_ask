@@ -1,6 +1,6 @@
 name: term_ask
 description: A simple gemini client for the terminal
-version: 1.0.1-a1
+version: 1.0.1
 repository: https://github.com/darkard2003/term_ask.git
 
 environment:
