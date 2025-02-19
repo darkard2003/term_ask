@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:mime/mime.dart';
 
 class TermAsk {
   final String _apiKey;
   late GenerativeModel _model;
+  late ChatSession _session;
 
   final prompts = [
     "You are a helpful person.",
@@ -14,28 +17,27 @@ class TermAsk {
     "You can also help with general knowledge.",
     "Your response must be concise and helpful.",
     "Format your responses using Markdown where appropriate to improve readability, including code blocks for code snippets.",
-    "User: Can you help me with"
+    "User: Can you help me with",
   ];
 
   TermAsk(this._apiKey) {
-    _model = GenerativeModel(
-      model: 'gemini-2.0-flash',
-      apiKey: _apiKey,
-    );
+    _model = GenerativeModel(model: 'gemini-2.0-flash', apiKey: _apiKey);
+    _session = _model.startChat();
   }
 
-  Future<String?> ask(List<String> prompt) async {
-    final promptContent = prompt.map((e) => Content.text(e));
-    final content = [...promptContent, Content.text('')];
-    final response = await _model.generateContent(content);
-    return response.text;
-  }
-
-  Stream<String?> askStream(List<String> uprompt) {
-    final promptContent = prompts.map((e) => Content.text(e));
-    final userPrompt = uprompt.map((e) => Content.text(e));
-    final content = [...promptContent, ...userPrompt];
-    final response = _model.generateContentStream(content);
-    return response.map((e) => e.text);
+  Stream<String?> askStream(List<String> uprompt, {String? filepath}) {
+    var parts = <Part>[
+      TextPart(uprompt.join(' ')),
+    ];
+    if (filepath != null) {
+      var mime = lookupMimeType(filepath);
+      if (mime == null) throw Exception('Unknown file type');
+      var file = File(filepath);
+      parts.insert(0, DataPart(mime, file.readAsBytesSync()));
+    }
+    var stream = _session.sendMessageStream(Content.multi(parts));
+    return stream.map((response) {
+      return response.text;
+    });
   }
 }
