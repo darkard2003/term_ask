@@ -20,5 +20,10 @@ A command-line tool that uses the Gemini API to answer your questions.
 
 ## Usage
 
-Just type `term_ask` followed by your question.
+Just type `ask` followed by your question.
 
+Can also ask questions about files:
+
+```bash
+ask -f README.md -f CHANGELOG.md what does these files do
+```
