@@ -4,7 +4,6 @@
 
 - Added version command
 
-
 ## 1.0.3
 
 - Added file support for `ask` command

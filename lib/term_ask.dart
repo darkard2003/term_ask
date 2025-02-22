@@ -31,14 +31,21 @@ class TermAsk {
       TextPart(uprompt.join(' ')),
     ];
     for (var filepath in filepath) {
-      var mime = lookupMimeType(filepath);
-      if (mime == null) throw Exception('Unknown file type');
-      var file = File(filepath);
-      parts.insert(0, DataPart(mime, file.readAsBytesSync()));
+      parts.add(TextPart(readFile(filepath)));
     }
     var stream = _session.sendMessageStream(Content.multi(parts));
     return stream.map((response) {
       return response.text;
     });
+  }
+
+  String readFile(String filepath) {
+    var file = File(filepath);
+    try {
+      var content = file.readAsStringSync();
+      return 'File: ${file.path}\n\n$content';
+    } catch (e) {
+      throw Exception('Error reading file: $filepath');
+    }
   }
 }
