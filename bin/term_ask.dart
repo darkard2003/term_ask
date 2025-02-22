@@ -1,10 +1,21 @@
 import 'dart:io';
-
+import 'package:yaml/yaml.dart';
 import 'package:args/args.dart';
 import 'package:console_markdown/console_markdown.dart';
 import 'package:dotenv/dotenv.dart';
 import 'package:term_ask/term_ask.dart';
 import 'package:path/path.dart' as p;
+
+Future<String> getVersion() async {
+  try {
+    final file = File('pubspec.yaml');
+    final yamlString = await file.readAsString();
+    final yaml = loadYaml(yamlString);
+    return yaml['version'] ?? 'Unknown';
+  } catch (e) {
+    return 'Unknown';
+  }
+}
 
 Future<void> prittyPrintResponse(Stream<String?> response) async {
   StringBuffer buffer = StringBuffer();
@@ -37,6 +48,9 @@ void main(List<String> args) async {
   parser.addMultiOption('file',
       abbr: 'f', help: 'File to use as context for the prompt.');
 
+  parser.addFlag('version',
+      abbr: 'v', help: 'Display the version of this program.');
+
   ArgResults argResults;
 
   try {
@@ -51,6 +65,11 @@ void main(List<String> args) async {
     print('');
     print('Options:');
     print(parser.usage);
+    exit(0);
+  }
+
+  if (argResults.flag('version')) {
+    print(await getVersion());
     exit(0);
   }
 
