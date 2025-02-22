@@ -29,10 +29,12 @@ Future<void> prittyPrintResponse(Stream<String?> response) async {
 }
 
 void main(List<String> args) async {
-  var parser = ArgParser();
+  var parser = ArgParser(
+    allowTrailingOptions: false,
+  );
 
   parser.addFlag('help', abbr: 'h', help: 'Display this help message.');
-  parser.addOption('file',
+  parser.addMultiOption('file',
       abbr: 'f', help: 'File to use as context for the prompt.');
 
   ArgResults argResults;
@@ -62,19 +64,20 @@ void main(List<String> args) async {
 
   var model = TermAsk(apiKey);
 
-  var filepath = argResults.option('file');
+  var filepath =
+      argResults.multiOption('file').map((e) => p.absolute(e)).toList();
   var rest = argResults.rest;
-  var uri = filepath != null ? p.absolute(filepath) : null;
+
+  Stream<String?> response;
 
   if (rest.isNotEmpty) {
-    Stream<String?> response;
-    if (uri != null) {
-      response = model.askStream(rest, filepath: uri);
-      uri = null;
+    if (filepath.isNotEmpty) {
+      response = model.askStream(rest, filepath: filepath);
+      filepath = [];
     } else {
       response = model.askStream(rest);
     }
-    prittyPrintResponse(response);
+    await prittyPrintResponse(response);
   }
 
   while (true) {
@@ -86,10 +89,8 @@ void main(List<String> args) async {
     if (input.isEmpty) {
       continue;
     }
-    Stream<String?> response;
-    if (uri != null) {
-      response = model.askStream([input], filepath: uri);
-      uri = null;
+    if (filepath.isNotEmpty) {
+      response = model.askStream([input], filepath: filepath);
     } else {
       response = model.askStream([input]);
     }

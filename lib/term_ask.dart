@@ -25,11 +25,12 @@ class TermAsk {
     _session = _model.startChat();
   }
 
-  Stream<String?> askStream(List<String> uprompt, {String? filepath}) {
+  Stream<String?> askStream(List<String> uprompt,
+      {List<String> filepath = const []}) {
     var parts = <Part>[
       TextPart(uprompt.join(' ')),
     ];
-    if (filepath != null) {
+    for (var filepath in filepath) {
       var mime = lookupMimeType(filepath);
       if (mime == null) throw Exception('Unknown file type');
       var file = File(filepath);
