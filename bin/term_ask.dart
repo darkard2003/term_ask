@@ -67,33 +67,49 @@ void main(List<String> args) async {
   var uri = filepath != null ? p.absolute(filepath) : null;
 
   if (rest.isNotEmpty) {
-    Stream<String?> response;
-    if (uri != null) {
-      response = model.askStream(rest, filepath: uri);
-      uri = null;
-    } else {
-      response = model.askStream(rest);
+    try {
+      Stream<String?> response;
+      if (uri != null) {
+        response = model.askStream(rest, filepath: uri);
+        uri = null;
+      } else {
+        response = model.askStream(rest);
+      }
+      prittyPrintResponse(response);
+    } on ArgumentError catch (e) {
+      print(e.message);
+      exit(1);
+    } catch (e) {
+      print('An error occurred: $e');
+      exit(1);
     }
-    prittyPrintResponse(response);
   }
 
   while (true) {
-    stdout.write('> ');
-    var input = stdin.readLineSync();
-    if (input == null || input == 'exit') {
-      break;
+    try {
+      stdout.write('> ');
+      var input = stdin.readLineSync();
+      if (input == null || input == 'exit') {
+        break;
+      }
+      if (input.isEmpty) {
+        continue;
+      }
+      Stream<String?> response;
+      if (uri != null) {
+        response = model.askStream([input], filepath: uri);
+        uri = null;
+      } else {
+        response = model.askStream([input]);
+      }
+      await prittyPrintResponse(response);
+    } on ArgumentError catch (e) {
+      print(e.message);
+      exit(1);
+    } catch (e) {
+      print('An error occurred: $e');
+      exit(1);
     }
-    if (input.isEmpty) {
-      continue;
-    }
-    Stream<String?> response;
-    if (uri != null) {
-      response = model.askStream([input], filepath: uri);
-      uri = null;
-    } else {
-      response = model.askStream([input]);
-    }
-    await prittyPrintResponse(response);
   }
   exit(0);
 }

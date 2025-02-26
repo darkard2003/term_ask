@@ -30,8 +30,10 @@ class TermAsk {
       TextPart(uprompt.join(' ')),
     ];
     if (filepath != null) {
-      var mime = lookupMimeType(filepath);
-      if (mime == null) throw Exception('Unknown file type');
+      var mime = lookupMimeType(filepath) ?? _fallbackMimeType(filepath);
+      if (mime == null) {
+        throw ArgumentError('Could not determine MIME type for $filepath');
+      }
       var file = File(filepath);
       parts.insert(0, DataPart(mime, file.readAsBytesSync()));
     }
@@ -39,5 +41,30 @@ class TermAsk {
     return stream.map((response) {
       return response.text;
     });
+  }
+
+  String? _fallbackMimeType(String path) {
+    var filename = path.split('/').last;
+    var ext = filename.split('.').last;
+    switch (ext) {
+      case 'yaml':
+        return 'application/x-yaml';
+      case 'yml':
+        return 'application/x-yaml';
+      case 'json':
+        return 'application/json';
+      case 'tsx':
+        return 'text/tsx';
+      case 'jsx':
+        return 'text/jsx';
+      case 'xml':
+        return 'application/xml';
+      case 'Makefile':
+        return 'text/x-makefile';
+      case 'dockerfile':
+        return 'text/x-dockerfile';
+      default:
+        return null;
+    }
   }
 }
