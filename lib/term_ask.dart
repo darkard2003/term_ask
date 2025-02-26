@@ -25,17 +25,13 @@ class TermAsk {
     _session = _model.startChat();
   }
 
-  Stream<String?> askStream(List<String> uprompt, {String? filepath}) {
+  Stream<String?> askStream(List<String> uprompt,
+      {List<String> filepath = const []}) {
     var parts = <Part>[
       TextPart(uprompt.join(' ')),
     ];
-    if (filepath != null) {
-      var mime = lookupMimeType(filepath) ?? _fallbackMimeType(filepath);
-      if (mime == null) {
-        throw ArgumentError('Could not determine MIME type for $filepath');
-      }
-      var file = File(filepath);
-      parts.insert(0, DataPart(mime, file.readAsBytesSync()));
+    for (var filepath in filepath) {
+      parts.add(TextPart(readFile(filepath)));
     }
     var stream = _session.sendMessageStream(Content.multi(parts));
     return stream.map((response) {
@@ -43,28 +39,13 @@ class TermAsk {
     });
   }
 
-  String? _fallbackMimeType(String path) {
-    var filename = path.split('/').last;
-    var ext = filename.split('.').last;
-    switch (ext) {
-      case 'yaml':
-        return 'application/x-yaml';
-      case 'yml':
-        return 'application/x-yaml';
-      case 'json':
-        return 'application/json';
-      case 'tsx':
-        return 'text/tsx';
-      case 'jsx':
-        return 'text/jsx';
-      case 'xml':
-        return 'application/xml';
-      case 'Makefile':
-        return 'text/x-makefile';
-      case 'dockerfile':
-        return 'text/x-dockerfile';
-      default:
-        return null;
+  String readFile(String filepath) {
+    var file = File(filepath);
+    try {
+      var content = file.readAsStringSync();
+      return 'File: ${file.path}\n\n$content';
+    } catch (e) {
+      throw Exception('Error reading file: $filepath');
     }
   }
 }

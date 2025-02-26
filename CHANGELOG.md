@@ -1,3 +1,14 @@
+# Changelog
+
+## 1.0.4
+
+- Added version command
+
+## 1.0.3
+
+- Added file support for `ask` command
+- Can add multiple files and ask question about it
+
 ## 1.0.2
 
 - Fixed api key bug
